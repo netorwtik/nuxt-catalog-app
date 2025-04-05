@@ -1,4 +1,3 @@
-<!-- layouts/default.vue -->
 <template>
   <div class="app-layout">
     <header class="app-header">
@@ -15,63 +14,62 @@
 
     <footer class="app-footer">
       <div class="container footer-container">
-        <p>
-          &copy; {{ new Date().getFullYear() }} TechCatalog. Все права защищены.
-        </p>
+        <p>&copy; {{ new Date().getFullYear() }} TechCatalog. Все права защищены.</p>
       </div>
     </footer>
   </div>
+  <BackToTop />
 </template>
 
 <style lang="scss" scoped>
-.app-layout {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.app-header {
-  background-color: #2c3e50;
-  color: white;
-  padding: 1rem 0;
-
-  .header-container {
+  .app-layout {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
   }
 
-  .logo {
-    text-decoration: none;
+  .app-header {
+    background-color: #2c3e50;
     color: white;
+    padding: 1rem 0;
 
-    .logo-text {
-      font-size: 1.5rem;
-      font-weight: 700;
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      text-decoration: none;
+      color: white;
+
+      .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
     }
   }
-}
 
-.app-main {
-  flex: 1;
-}
-
-.app-footer {
-  background-color: #2c3e50;
-  color: white;
-  padding: 1.5rem 0;
-  margin-top: 3rem;
-
-  .footer-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
+  .app-main {
+    flex: 1;
   }
 
-  p {
-    font-size: 0.875rem;
-    opacity: 0.8;
+  .app-footer {
+    background-color: #2c3e50;
+    color: white;
+    padding: 1.5rem 0;
+    margin-top: 3rem;
+
+    .footer-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    p {
+      font-size: 0.875rem;
+      opacity: 0.8;
+    }
   }
-}
 </style>

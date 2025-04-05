@@ -1,20 +1,20 @@
-// composables/usePagination.ts
+
 import { computed } from "vue";
 import { useCatalogStore } from "~/stores/catalog";
 
 export const usePagination = () => {
   const store = useCatalogStore();
-
+  
   const pagination = computed(() => store.pagination);
 
   const pageNumbers = computed(() => {
     const currentPage = pagination.value.currentPage;
     const totalPages = pagination.value.totalPages;
-    const delta = 2; // Количество страниц до и после текущей
+    const delta = 2;
 
     const pages: (number | string)[] = [];
 
-    // Начало
+    
     if (currentPage > 1) {
       pages.push(1);
       if (currentPage > delta + 1) {
@@ -22,7 +22,7 @@ export const usePagination = () => {
       }
     }
 
-    // Середина
+    
     const pagesStart = Math.max(2, currentPage - delta);
     const pagesEnd = Math.min(totalPages - 1, currentPage + delta);
 
@@ -30,7 +30,7 @@ export const usePagination = () => {
       pages.push(i);
     }
 
-    // Конец
+    
     if (currentPage < totalPages) {
       if (currentPage < totalPages - delta) {
         pages.push("...");
@@ -59,11 +59,24 @@ export const usePagination = () => {
     }
   };
 
+  const setItemsPerPage = (count: number) => {
+    if (count > 0) {
+      store.pagination.itemsPerPage = count;
+      store.pagination.totalPages = Math.ceil(store.filteredProducts.length / count);
+      
+      
+      if (store.pagination.currentPage > store.pagination.totalPages) {
+        store.pagination.currentPage = store.pagination.totalPages;
+      }
+    }
+  };
+  
   return {
     pagination,
     pageNumbers,
     goToPage,
     nextPage,
     prevPage,
+    setItemsPerPage
   };
 };

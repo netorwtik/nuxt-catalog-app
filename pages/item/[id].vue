@@ -1,4 +1,3 @@
-<!-- pages/item/[id].vue -->
 <template>
   <div class="container product-detail-container">
     <div class="back-link">
@@ -43,9 +42,10 @@
             <div v-if="product.dimensions" class="spec-item">
               <span class="spec-label">Размеры:</span>
               <span class="spec-value">
-                {{ product.dimensions.width }}x{{
-                  product.dimensions.height
-                }}x{{ product.dimensions.depth }} см
+                {{ product.dimensions.width }}x{{ product.dimensions.height }}x{{
+                  product.dimensions.depth
+                }}
+                см
               </span>
             </div>
 
@@ -61,10 +61,7 @@
           </div>
         </div>
 
-        <div
-          class="product-features"
-          v-if="product.features && product.features.length"
-        >
+        <div class="product-features" v-if="product.features && product.features.length">
           <h3>Особенности</h3>
           <ul>
             <li v-for="(feature, index) in product.features" :key="index">
@@ -83,244 +80,239 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useCatalogStore } from "~/stores/catalog";
-import type { Product } from "~/types/item";
+<script setup>
+  // Используем автоимпорты Nuxt 3 - не нужно явно импортировать
+  // В Nuxt 3 большинство компонентов автоматически импортируются
 
-const route = useRoute();
-const store = useCatalogStore();
+  const route = useRoute();
+  const store = useCatalogStore();
 
-const product = ref<Product | null>(null);
-const loading = ref(true);
-const error = ref<string | null>(null);
+  const product = ref(null);
+  const loading = ref(true);
+  const error = ref(null);
 
-const formatPrice = (price: number) => {
-  return new Intl.NumberFormat("ru-RU", {
-    style: "currency",
-    currency: "RUB",
-    minimumFractionDigits: 0,
-  }).format(price);
-};
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('ru-RU', {
+      style: 'currency',
+      currency: 'RUB',
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
 
-onMounted(async () => {
-  const id = Number(route.params.id);
+  onMounted(async () => {
+    const id = Number(route.params.id);
 
-  if (isNaN(id)) {
-    error.value = "Неверный идентификатор товара";
+    if (isNaN(id)) {
+      error.value = 'Неверный идентификатор товара';
+      loading.value = false;
+      return;
+    }
+
+    // Если у нас еще нет данных, загружаем их
+    if (store.products.length === 0) {
+      await store.fetchProducts();
+    }
+
+    const foundProduct = store.products.find((p) => p.id === id);
+
+    if (foundProduct) {
+      product.value = foundProduct;
+      store.selectProduct(foundProduct);
+    } else {
+      error.value = 'Товар не найден';
+    }
+
     loading.value = false;
-    return;
-  }
-
-  // Если у нас еще нет данных, загружаем их
-  if (store.products.length === 0) {
-    await store.fetchProducts();
-  }
-
-  const foundProduct = store.products.find((p) => p.id === id);
-
-  if (foundProduct) {
-    product.value = foundProduct;
-    store.selectProduct(foundProduct);
-  } else {
-    error.value = "Товар не найден";
-  }
-
-  loading.value = false;
-});
+  });
 </script>
 
 <style lang="scss" scoped>
-.product-detail-container {
-  padding: 2rem 0;
+  .product-detail-container {
+    padding: 2rem 0;
 
-  .back-link {
-    margin-bottom: 2rem;
+    .back-link {
+      margin-bottom: 2rem;
 
-    a {
-      color: #3498db;
-      text-decoration: none;
-      font-weight: 500;
+      a {
+        color: #3498db;
+        text-decoration: none;
+        font-weight: 500;
 
-      &:hover {
-        text-decoration: underline;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
-  }
 
-  .error-message {
-    padding: 2rem;
-    text-align: center;
-    background-color: #f8d7da;
-    color: #721c24;
-    border-radius: 8px;
-    margin: 2rem 0;
-  }
-
-  .product-detail {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-    }
-
-    .product-image {
+    .error-message {
+      padding: 2rem;
+      text-align: center;
+      background-color: #f8d7da;
+      color: #721c24;
       border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-
-      img {
-        width: 100%;
-        height: auto;
-        display: block;
-      }
+      margin: 2rem 0;
     }
 
-    .product-info {
-      .product-title {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-        color: #2c3e50;
+    .product-detail {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
       }
 
-      .product-meta {
-        margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
+      .product-image {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 
-        .product-brand {
-          font-weight: 600;
-          color: #333;
-        }
-
-        .product-category {
-          margin-left: 1rem;
-          color: #666;
-
-          &:before {
-            content: "•";
-            margin-right: 0.5rem;
-          }
+        img {
+          width: 100%;
+          height: auto;
+          display: block;
         }
       }
 
-      .product-rating {
-        display: flex;
-        align-items: center;
-        margin-bottom: 1.5rem;
-
-        .stars {
-          position: relative;
-          display: inline-block;
-          width: 100px;
-          height: 20px;
-
-          &:before {
-            content: "★★★★★";
-            letter-spacing: 3px;
-            background: linear-gradient(
-              90deg,
-              gold var(--rating, 0%),
-              #ddd var(--rating, 0%)
-            );
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 20px;
-          }
+      .product-info {
+        .product-title {
+          font-size: 2rem;
+          margin-bottom: 0.5rem;
+          color: #2c3e50;
         }
 
-        .rating-text {
-          margin-left: 0.75rem;
-          color: #666;
-        }
-      }
+        .product-meta {
+          margin-bottom: 1rem;
+          display: flex;
+          align-items: center;
 
-      .product-description {
-        font-size: 1rem;
-        line-height: 1.6;
-        color: #333;
-        margin-bottom: 2rem;
-      }
-
-      h3 {
-        font-size: 1.25rem;
-        margin-bottom: 1rem;
-        color: #2c3e50;
-      }
-
-      .product-specs {
-        margin-bottom: 2rem;
-
-        .spec-group {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-
-          @media (max-width: 480px) {
-            grid-template-columns: 1fr;
-          }
-
-          .spec-item {
-            display: flex;
-            font-size: 0.95rem;
-
-            .spec-label {
-              font-weight: 600;
-              color: #333;
-              width: 40%;
-            }
-
-            .spec-value {
-              color: #666;
-            }
-          }
-        }
-      }
-
-      .product-features {
-        margin-bottom: 2rem;
-
-        ul {
-          list-style-position: inside;
-          padding-left: 0;
-
-          li {
-            margin-bottom: 0.5rem;
+          .product-brand {
+            font-weight: 600;
             color: #333;
           }
+
+          .product-category {
+            margin-left: 1rem;
+            color: #666;
+
+            &:before {
+              content: '•';
+              margin-right: 0.5rem;
+            }
+          }
         }
-      }
 
-      .product-price-actions {
-        display: flex;
-        align-items: center;
-        margin-top: 2rem;
+        .product-rating {
+          display: flex;
+          align-items: center;
+          margin-bottom: 1.5rem;
 
-        .product-price {
-          font-size: 1.75rem;
-          font-weight: 700;
+          .stars {
+            position: relative;
+            display: inline-block;
+            width: 100px;
+            height: 20px;
+
+            &:before {
+              content: '★★★★★';
+              letter-spacing: 3px;
+              background: linear-gradient(90deg, gold var(--rating, 0%), #ddd var(--rating, 0%));
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              font-size: 20px;
+            }
+          }
+
+          .rating-text {
+            margin-left: 0.75rem;
+            color: #666;
+          }
+        }
+
+        .product-description {
+          font-size: 1rem;
+          line-height: 1.6;
+          color: #333;
+          margin-bottom: 2rem;
+        }
+
+        h3 {
+          font-size: 1.25rem;
+          margin-bottom: 1rem;
           color: #2c3e50;
-          margin-right: 2rem;
         }
 
-        .add-to-cart-btn {
-          background-color: #e74c3c;
-          color: white;
-          border: none;
-          padding: 0.75rem 1.5rem;
-          border-radius: 4px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background-color 0.2s;
+        .product-specs {
+          margin-bottom: 2rem;
 
-          &:hover {
-            background-color: #c0392b;
+          .spec-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+
+            @media (max-width: 480px) {
+              grid-template-columns: 1fr;
+            }
+
+            .spec-item {
+              display: flex;
+              font-size: 0.95rem;
+
+              .spec-label {
+                font-weight: 600;
+                color: #333;
+                width: 40%;
+              }
+
+              .spec-value {
+                color: #666;
+              }
+            }
+          }
+        }
+
+        .product-features {
+          margin-bottom: 2rem;
+
+          ul {
+            list-style-position: inside;
+            padding-left: 0;
+
+            li {
+              margin-bottom: 0.5rem;
+              color: #333;
+            }
+          }
+        }
+
+        .product-price-actions {
+          display: flex;
+          align-items: center;
+          margin-top: 2rem;
+
+          .product-price {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-right: 2rem;
+          }
+
+          .add-to-cart-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+
+            &:hover {
+              background-color: #c0392b;
+            }
           }
         }
       }
     }
   }
-}
 </style>

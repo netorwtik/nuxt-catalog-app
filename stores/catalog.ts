@@ -1,12 +1,12 @@
-// stores/catalog.ts
+
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import axios from "axios";
 import type { Product, PaginationInfo, ViewMode } from "~/types/item";
-import type { ApiResponse } from "~/types/api";
+
 
 export const useCatalogStore = defineStore("catalog", () => {
-  // Состояние
+
   const products = ref<Product[]>([]);
   const filteredProducts = ref<Product[]>([]);
   const loading = ref<boolean>(false);
@@ -21,7 +21,7 @@ export const useCatalogStore = defineStore("catalog", () => {
   });
   const selectedProduct = ref<Product | null>(null);
 
-  // Геттеры
+
   const paginatedProducts = computed(() => {
     const start =
       (pagination.value.currentPage - 1) * pagination.value.itemsPerPage;
@@ -29,49 +29,52 @@ export const useCatalogStore = defineStore("catalog", () => {
     return filteredProducts.value.slice(start, end);
   });
 
-  // Действия
+
   async function fetchProducts() {
     loading.value = true;
     error.value = null;
-
+    
     try {
-      // Используем API для получения электронных товаров
-      // API Products: https://dummyjson.com/products
-      const response = await axios.get("https://dummyjson.com/products");
-      const data = response.data;
 
-      // Преобразуем данные в наш формат Product
+      const response = await axios.get('https://dummyjson.com/products');
+      const data = response.data;
+      
+      if (!data || !data.products || !Array.isArray(data.products)) {
+        throw new Error('Некорректные данные от API');
+      }
+      
+
       products.value = data.products.map((item: any) => ({
         id: item.id,
-        name: item.title,
-        description: item.description,
-        price: item.price,
-        category: item.category,
-        brand: item.brand,
-        color: item.color || "Не указан",
+        name: item.title || 'Без названия',
+        description: item.description || 'Описание отсутствует',
+        price: typeof item.price === 'number' ? item.price : 0,
+        category: item.category || 'Без категории',
+        brand: item.brand || 'Без бренда',
+        color: item.color || 'Не указан',
         dimensions: {
           width: item.width || 0,
           height: item.height || 0,
-          depth: item.depth || 0,
+          depth: item.depth || 0
         },
         weight: item.weight || 0,
-        stock: item.stock,
-        rating: item.rating,
-        image: item.thumbnail,
-        features: item.features || [],
+        stock: item.stock || 0,
+        rating: typeof item.rating === 'number' ? item.rating : 0,
+        image: item.thumbnail || '',
+        features: item.features || []
       }));
+      
 
-      // Обновляем отфильтрованные продукты
       filteredProducts.value = [...products.value];
+      
 
-      // Обновляем пагинацию
       pagination.value.totalItems = filteredProducts.value.length;
-      pagination.value.totalPages = Math.ceil(
-        filteredProducts.value.length / pagination.value.itemsPerPage
-      );
+      pagination.value.totalPages = Math.ceil(filteredProducts.value.length / pagination.value.itemsPerPage);
     } catch (err) {
-      error.value = "Ошибка при загрузке данных";
-      console.error("Error fetching products:", err);
+      console.error('Error fetching products:', err);
+      error.value = err instanceof Error 
+        ? `Ошибка при загрузке данных: ${err.message}` 
+        : 'Произошла неизвестная ошибка при загрузке данных';
     } finally {
       loading.value = false;
     }
@@ -100,7 +103,7 @@ export const useCatalogStore = defineStore("catalog", () => {
       });
     }
 
-    // Сбрасываем на первую страницу при поиске
+
     pagination.value.currentPage = 1;
     pagination.value.totalItems = filteredProducts.value.length;
     pagination.value.totalPages = Math.ceil(

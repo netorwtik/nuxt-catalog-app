@@ -1,4 +1,4 @@
-// composables/useViewMode.ts
+
 import { computed } from "vue";
 import { useCatalogStore } from "~/stores/catalog";
 import type { ViewMode } from "~/types/item";

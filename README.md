@@ -1,75 +1,37 @@
-# Nuxt Minimal Starter
+# Nuxt Catalog App
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Веб-приложение на Vue 3 и Nuxt 3, представляющее каталог товаров с возможностью поиска, фильтрации и детального просмотра.
 
-## Setup
+## Функциональность
 
-Make sure to install dependencies:
+- Загрузка данных с публичного API (DummyJSON)
+- Глубокий поиск по всем свойствам товаров
+- Переключение между режимами отображения (плитка/список)
+- Пагинация результатов
+- Детальный просмотр товара на отдельной странице
+- Адаптивный дизайн
+
+## Технологии
+
+- Vue 3
+- Nuxt 3
+- Pinia для управления состоянием
+- TypeScript для типизации
+- SCSS для стилизации
+- Composition API и кастомные composables
+- Адаптивная вёрстка с использованием Flexbox и Grid
+
+## Установка и запуск
 
 ```bash
-# npm
+# Установка зависимостей
 npm install
 
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
+# Запуск в режиме разработки
 npm run dev
 
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
+# Сборка для продакшена
 npm run build
 
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
+# Предпросмотр сборки
 npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.

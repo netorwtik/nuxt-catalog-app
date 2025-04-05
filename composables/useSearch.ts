@@ -1,4 +1,4 @@
-// composables/useSearch.ts
+
 import { ref, watch, onBeforeUnmount } from "vue";
 import { useCatalogStore } from "~/stores/catalog";
 
@@ -7,7 +7,7 @@ export const useSearch = () => {
   const debouncedQuery = ref("");
   const store = useCatalogStore();
 
-  // Используем debounce для поиска, чтобы не вызывать поиск при каждом нажатии клавиши
+
   watch(searchQuery, (newValue) => {
     const timer = setTimeout(() => {
       debouncedQuery.value = newValue;

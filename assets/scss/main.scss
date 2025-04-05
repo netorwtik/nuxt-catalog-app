@@ -1,7 +1,7 @@
-/* Используем @use вместо @import */
+
 @use "./variables" as vars;
 
-/* Сброс стилей */
+
 * {
   margin: 0;
   padding: 0;
@@ -35,7 +35,7 @@ button {
   padding: 0 vars.$spacing-lg;
 }
 
-/* Flexbox утилиты */
+
 .flex {
   display: flex;
 }
@@ -56,7 +56,7 @@ button {
   flex-wrap: wrap;
 }
 
-/* Отступы */
+
 .mb-1 {
   margin-bottom: vars.$spacing-sm;
 }
